@@ -1,1 +1,1 @@
-./Debug/main.cpp.o ./Debug/Mesh.cpp.o ./Debug/Exception.cpp.o
+./Debug/main.cpp.o ./Debug/Mesh.cpp.o ./Debug/Exception.cpp.o ./Debug/Vector3f.cpp.o

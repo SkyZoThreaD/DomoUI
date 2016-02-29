@@ -31,6 +31,8 @@
     <File Name="Mesh.h"/>
     <File Name="Exception.cpp"/>
     <File Name="Exception.h"/>
+    <File Name="Vector3f.h"/>
+    <File Name="Vector3f.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

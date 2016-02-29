@@ -16,8 +16,10 @@ public:
 	void LoadMesh();
 	Mesh(const std::string);
 	~Mesh();
-private:
+	
 	Vertex *g_quadVertices;
+private:
+	
 	std::string FileName;
 };
 

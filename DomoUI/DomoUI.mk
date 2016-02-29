@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/Exception.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/Exception.cpp$(ObjectSuffix) $(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix) 
 
 
 
@@ -114,6 +114,14 @@ $(IntermediateDirectory)/Exception.cpp$(DependSuffix): Exception.cpp
 
 $(IntermediateDirectory)/Exception.cpp$(PreprocessSuffix): Exception.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Exception.cpp$(PreprocessSuffix) "Exception.cpp"
+
+$(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix): Vector3f.cpp $(IntermediateDirectory)/Vector3f.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/tupac/Documents/DomoUI/DomoUI/Vector3f.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Vector3f.cpp$(DependSuffix): Vector3f.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/Vector3f.cpp$(DependSuffix) -MM "Vector3f.cpp"
+
+$(IntermediateDirectory)/Vector3f.cpp$(PreprocessSuffix): Vector3f.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Vector3f.cpp$(PreprocessSuffix) "Vector3f.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

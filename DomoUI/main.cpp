@@ -60,9 +60,11 @@ struct BMPImage
 int main(int argc, char **argv);
 void render(void);
 void init(void);
-void getBitmapImageData(char *pFileName, BMPImage *pImage);
+void getBitmapImageData(const std::string pFileName, BMPImage *pImage);
 void loadTexture(void);
 void MakeMesh();
+
+DomoUI::Mesh *mesh;
 
 //-----------------------------------------------------------------------------
 // Name: main()
@@ -70,12 +72,15 @@ void MakeMesh();
 //-----------------------------------------------------------------------------
 int main( int argc, char **argv )
 {
-	try{
-		DomoUI::Mesh mesh("Plane.dmesh");
+	
+	
+	try
+	{
+		mesh = new DomoUI::Mesh("../Media/Plane.dmesh");
 	}
 	catch(DomoUI::Exception *e)
 	{
-		printf("ex:%s", e->getComment());
+		std::cout<<"Except:"<<e->getComment()<<std::endl;
 	}
 	
     XSetWindowAttributes windowAttributes;
@@ -292,36 +297,36 @@ void init( void )
 // Name: getBitmapImageData()
 // Desc: Simply image loader for 24 bit BMP files.
 //-----------------------------------------------------------------------------
-void getBitmapImageData( char *pFileName, BMPImage *pImage )
+void getBitmapImageData( const std::string pFileName, BMPImage *pImage )
 {
     FILE *pFile = NULL;
     unsigned short nNumPlanes;
     unsigned short nNumBPP;
 	int i;
 
-    if( (pFile = fopen(pFileName, "rb") ) == NULL )
-		printf("ERROR: getBitmapImageData - %s not found\n",pFileName);
+    if( (pFile = fopen(pFileName.c_str(), "rb") ) == NULL )
+		printf("ERROR: getBitmapImageData - %s not found\n",pFileName.c_str());
 
     // Seek forward to width and height info
     fseek( pFile, 18, SEEK_CUR );
 
     if( (i = fread(&pImage->width, 4, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read width from %s.\n", pFileName);
+		printf("ERROR: getBitmapImageData - Couldn't read width from %s.\n", pFileName.c_str());
 
     if( (i = fread(&pImage->height, 4, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read height from %s.\n", pFileName);
+		printf("ERROR: getBitmapImageData - Couldn't read height from %s.\n", pFileName.c_str());
 
     if( (fread(&nNumPlanes, 2, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read plane count from %s.\n", pFileName);
+		printf("ERROR: getBitmapImageData - Couldn't read plane count from %s.\n", pFileName.c_str());
 	
     if( nNumPlanes != 1 )
-		printf( "ERROR: getBitmapImageData - Plane count from %s is not 1: %u\n", pFileName, nNumPlanes );
+		printf( "ERROR: getBitmapImageData - Plane count from %s is not 1: %u\n", pFileName.c_str(), nNumPlanes );
 
     if( (i = fread(&nNumBPP, 2, 1, pFile)) != 1 )
-		printf( "ERROR: getBitmapImageData - Couldn't read BPP from %s.\n", pFileName );
+		printf( "ERROR: getBitmapImageData - Couldn't read BPP from %s.\n", pFileName.c_str() );
 	
     if( nNumBPP != 24 )
-		printf( "ERROR: getBitmapImageData - BPP from %s is not 24: %u\n", pFileName, nNumBPP );
+		printf( "ERROR: getBitmapImageData - BPP from %s is not 24: %u\n", pFileName.c_str(), nNumBPP );
 
     // Seek forward to image data
     fseek( pFile, 24, SEEK_CUR );
@@ -334,7 +339,7 @@ void getBitmapImageData( char *pFileName, BMPImage *pImage )
     pImage->data = (char*) malloc( nTotalImagesize );
 	
     if( (i = fread(pImage->data, nTotalImagesize, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read image data from %s.\n", pFileName);
+		printf("ERROR: getBitmapImageData - Couldn't read image data from %s.\n", pFileName.c_str());
 
     //
 	// Finally, rearrange BGR to RGB
@@ -357,7 +362,7 @@ void loadTexture( void )
 {
 	BMPImage textureImage;
 	
-    getBitmapImageData( "test.bmp", &textureImage );
+    getBitmapImageData( "../Media/test.bmp", &textureImage );
 
 	glGenTextures( 1, &g_textureID );
 	glBindTexture( GL_TEXTURE_2D, g_textureID );
@@ -371,7 +376,7 @@ void loadTexture( void )
 
 void MakeMesh()
 {
-	glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
+	glInterleavedArrays( GL_T2F_V3F, 0, mesh->g_quadVertices );
 }
 
 //-----------------------------------------------------------------------------
@@ -383,14 +388,26 @@ void render( void )
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
     glMatrixMode( GL_MODELVIEW );
+	
+	//2 rend
+	glLoadIdentity();
+	glTranslatef( 0.0f, 2.0f, -10.0f );
+    glRotatef( 0, 1.0f, 0.0f, 0.0f );
+    glRotatef( 0, 0.0f, 1.0f, 0.0f );
+    glBindTexture( GL_TEXTURE_2D, g_textureID );
+    //glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
+    glDrawArrays( GL_QUADS, 0, 4 );
+
+
+// 1 rend
     glLoadIdentity();
 	glTranslatef( 0.0f, 0.0f, -5.0f );
     glRotatef( -g_fSpinY, 1.0f, 0.0f, 0.0f );
     glRotatef( -g_fSpinX, 0.0f, 1.0f, 0.0f );
-    
     glBindTexture( GL_TEXTURE_2D, g_textureID );
     //glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
     glDrawArrays( GL_QUADS, 0, 4 );
+
 
     if( g_bDoubleBuffered )
         glXSwapBuffers( g_pDisplay, g_window ); // Buffer swap does implicit glFlush
