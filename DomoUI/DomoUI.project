@@ -33,6 +33,14 @@
     <File Name="Exception.h"/>
     <File Name="Vector3f.h"/>
     <File Name="Vector3f.cpp"/>
+    <File Name="Texture.h"/>
+    <File Name="Texture.cpp"/>
+    <File Name="ResourceMgr.h"/>
+    <File Name="ResourceMgr.cpp"/>
+    <File Name="Renderable.h"/>
+    <File Name="Renderable.cpp"/>
+    <File Name="Engine.h"/>
+    <File Name="Engine.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

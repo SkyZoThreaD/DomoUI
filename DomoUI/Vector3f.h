@@ -14,6 +14,7 @@ public:
 	void setY(float);
 	void setZ(float);
 	Vector3f();
+	Vector3f(const float);
 	~Vector3f();
 
 private:

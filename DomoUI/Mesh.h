@@ -14,9 +14,10 @@ class Mesh
 {
 public:
 	void LoadMesh();
+	Vertex *Data();
 	Mesh(const std::string);
 	~Mesh();
-	
+	const std::string GetFileName();
 	Vertex *g_quadVertices;
 private:
 	

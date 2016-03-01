@@ -12,15 +12,15 @@ OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=
-Date                   :=02/29/16
+User                   :=tupac
+Date                   :=03/01/16
 CodeLitePath           :="/home/tupac/.codelite"
-LinkerName             :=/usr/bin/g++
-SharedObjectLinkerName :=/usr/bin/g++ -shared -fPIC
+LinkerName             :=g++
+SharedObjectLinkerName :=g++ -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
-PreprocessSuffix       :=.i
-DebugSwitch            :=-g 
+PreprocessSuffix       :=.o.i
+DebugSwitch            :=-gstab
 IncludeSwitch          :=-I
 LibrarySwitch          :=-l
 OutputSwitch           :=-o 
@@ -31,7 +31,7 @@ OutputFile             :=$(IntermediateDirectory)/$(ProjectName)
 Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
-PreprocessOnlySwitch   :=-E
+PreprocessOnlySwitch   :=-E 
 ObjectsFileList        :="DomoUI.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
@@ -47,20 +47,20 @@ LibPath                := $(LibraryPathSwitch).
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := /usr/bin/ar rcu
-CXX      := /usr/bin/g++
-CC       := /usr/bin/gcc
+AR       := ar rcus
+CXX      := g++
+CC       := gcc
 CXXFLAGS :=  -g -O0 -std=c++11 -Wall $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := /usr/bin/as
+AS       := as
 
 
 ##
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/Exception.cpp$(ObjectSuffix) $(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/Exception.cpp$(ObjectSuffix) $(IntermediateDirectory)/Vector3f.cpp$(ObjectSuffix) $(IntermediateDirectory)/Texture.cpp$(ObjectSuffix) $(IntermediateDirectory)/ResourceMgr.cpp$(ObjectSuffix) $(IntermediateDirectory)/Renderable.cpp$(ObjectSuffix) $(IntermediateDirectory)/Engine.cpp$(ObjectSuffix) 
 
 
 
@@ -122,6 +122,38 @@ $(IntermediateDirectory)/Vector3f.cpp$(DependSuffix): Vector3f.cpp
 
 $(IntermediateDirectory)/Vector3f.cpp$(PreprocessSuffix): Vector3f.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Vector3f.cpp$(PreprocessSuffix) "Vector3f.cpp"
+
+$(IntermediateDirectory)/Texture.cpp$(ObjectSuffix): Texture.cpp $(IntermediateDirectory)/Texture.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/tupac/Documents/DomoUI/DomoUI/Texture.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Texture.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Texture.cpp$(DependSuffix): Texture.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Texture.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/Texture.cpp$(DependSuffix) -MM "Texture.cpp"
+
+$(IntermediateDirectory)/Texture.cpp$(PreprocessSuffix): Texture.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Texture.cpp$(PreprocessSuffix) "Texture.cpp"
+
+$(IntermediateDirectory)/ResourceMgr.cpp$(ObjectSuffix): ResourceMgr.cpp $(IntermediateDirectory)/ResourceMgr.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/tupac/Documents/DomoUI/DomoUI/ResourceMgr.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/ResourceMgr.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/ResourceMgr.cpp$(DependSuffix): ResourceMgr.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/ResourceMgr.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/ResourceMgr.cpp$(DependSuffix) -MM "ResourceMgr.cpp"
+
+$(IntermediateDirectory)/ResourceMgr.cpp$(PreprocessSuffix): ResourceMgr.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/ResourceMgr.cpp$(PreprocessSuffix) "ResourceMgr.cpp"
+
+$(IntermediateDirectory)/Renderable.cpp$(ObjectSuffix): Renderable.cpp $(IntermediateDirectory)/Renderable.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/tupac/Documents/DomoUI/DomoUI/Renderable.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Renderable.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Renderable.cpp$(DependSuffix): Renderable.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Renderable.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/Renderable.cpp$(DependSuffix) -MM "Renderable.cpp"
+
+$(IntermediateDirectory)/Renderable.cpp$(PreprocessSuffix): Renderable.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Renderable.cpp$(PreprocessSuffix) "Renderable.cpp"
+
+$(IntermediateDirectory)/Engine.cpp$(ObjectSuffix): Engine.cpp $(IntermediateDirectory)/Engine.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/tupac/Documents/DomoUI/DomoUI/Engine.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Engine.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Engine.cpp$(DependSuffix): Engine.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Engine.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/Engine.cpp$(DependSuffix) -MM "Engine.cpp"
+
+$(IntermediateDirectory)/Engine.cpp$(PreprocessSuffix): Engine.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Engine.cpp$(PreprocessSuffix) "Engine.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

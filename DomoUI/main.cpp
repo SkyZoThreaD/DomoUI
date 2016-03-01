@@ -64,25 +64,14 @@ void getBitmapImageData(const std::string pFileName, BMPImage *pImage);
 void loadTexture(void);
 void MakeMesh();
 
-DomoUI::Mesh *mesh;
+DomoUI::Renderable *object;
 
 //-----------------------------------------------------------------------------
 // Name: main()
 // Desc:
 //-----------------------------------------------------------------------------
 int main( int argc, char **argv )
-{
-	
-	
-	try
-	{
-		mesh = new DomoUI::Mesh("../Media/Plane.dmesh");
-	}
-	catch(DomoUI::Exception *e)
-	{
-		std::cout<<"Except:"<<e->getComment()<<std::endl;
-	}
-	
+{	
     XSetWindowAttributes windowAttributes;
     XVisualInfo *visualInfo = NULL;
     XEvent event;
@@ -291,6 +280,16 @@ void init( void )
 	
 	loadTexture();
 	MakeMesh();
+	
+	try
+	{
+		object = new DomoUI::Renderable( "../Media/Plane.dmesh" , "../Media/test.bmp");
+		object->setPZ(-5);
+	}
+	catch(DomoUI::Exception *e)
+	{
+		std::cout<<"Except:"<<e->getComment()<<std::endl;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -376,7 +375,7 @@ void loadTexture( void )
 
 void MakeMesh()
 {
-	glInterleavedArrays( GL_T2F_V3F, 0, mesh->g_quadVertices );
+	glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
 }
 
 //-----------------------------------------------------------------------------
@@ -389,28 +388,12 @@ void render( void )
 	
     glMatrixMode( GL_MODELVIEW );
 	
-	//2 rend
-	glLoadIdentity();
-	glTranslatef( 0.0f, 2.0f, -10.0f );
-    glRotatef( 0, 1.0f, 0.0f, 0.0f );
-    glRotatef( 0, 0.0f, 1.0f, 0.0f );
-    glBindTexture( GL_TEXTURE_2D, g_textureID );
-    //glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
-    glDrawArrays( GL_QUADS, 0, 4 );
+	DomoUI::Engine eng;
+	
+	eng.RenderBit(object);
+	
+	object->setRX( object->getRX() + 0.1f );
 
-
-// 1 rend
-    glLoadIdentity();
-	glTranslatef( 0.0f, 0.0f, -5.0f );
-    glRotatef( -g_fSpinY, 1.0f, 0.0f, 0.0f );
-    glRotatef( -g_fSpinX, 0.0f, 1.0f, 0.0f );
-    glBindTexture( GL_TEXTURE_2D, g_textureID );
-    //glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
-    glDrawArrays( GL_QUADS, 0, 4 );
-
-
-    if( g_bDoubleBuffered )
-        glXSwapBuffers( g_pDisplay, g_window ); // Buffer swap does implicit glFlush
-    else
-        glFlush(); // Explicit flush for single buffered case 
+    if( g_bDoubleBuffered ) glXSwapBuffers( g_pDisplay, g_window ); // Buffer swap does implicit glFlush
+    else glFlush(); // Explicit flush for single buffered case 
 }

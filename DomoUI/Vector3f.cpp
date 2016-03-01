@@ -14,6 +14,10 @@ Vector3f::Vector3f()
 {
 }
 	
+Vector3f::Vector3f(const float v):x(v),y(v),z(v)
+{
+}
+	
 Vector3f::~Vector3f()
 {
 }
