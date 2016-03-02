@@ -8,11 +8,17 @@ namespace DomoUI
 
 class Engine
 {
-	public:
+public:
+	static Engine& Get();
+
 	void RenderBit(class Renderable*);
+	Renderable *CreateRenderable(const std::string MeshFileN, const std::string TextFileN);
+	void RenderAll();
 	Engine();
 	~Engine();
-
+private:
+	std::vector<Renderable> Renderable_Array;
+	static Engine Unique_Instance;
 };
 
 }

@@ -1,31 +1,8 @@
-//-----------------------------------------------------------------------------
-//           Name: ogl_glx_sample.cpp
-//         Author: Kevin Harris
-//  Last Modified: 08/06/04
-//    Description:  This sample is a basic demonstration of how to use GLX to 
-//                  create windowed OpenGL samples via XFree86, which is a a 
-//                  freely redistributable open-source implementation of the 
-//                  X Window System.
-//
-//   Control Keys: 
-//-----------------------------------------------------------------------------
-
 #include <DomoUI.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-//#include <string.h>
-#include <GL/glx.h> // This includes the necessary X headers
-#include <GL/gl.h>
-#include <GL/glu.h>
-
-//-----------------------------------------------------------------------------
-// GLOBALS
-//-----------------------------------------------------------------------------
 Display *g_pDisplay = NULL;
 Window   g_window;
 bool     g_bDoubleBuffered = GL_TRUE;
-GLuint   g_textureID = 0;
 
 float g_fSpinX           = 0.0f;
 float g_fSpinY           = 0.0f;
@@ -33,42 +10,14 @@ int   g_nLastMousePositX = 0;
 int   g_nLastMousePositY = 0;
 bool  g_bMousing         = false;
 
-struct Vertex
-{
-    float tu, tv;
-    float x, y, z;
-};
-
-Vertex g_quadVertices[] =
-{
-    { 0.0f,0.0f, -1.0f,-1.0f, 0.0f },
-    { 1.0f,0.0f,  1.0f,-1.0f, 0.0f },
-    { 1.0f,1.0f,  1.0f, 1.0f, 0.0f },
-    { 0.0f,1.0f, -1.0f, 1.0f, 0.0f }
-};
-
-struct BMPImage
-{
-    int   width;
-    int   height;
-    char *data;
-};
-
-//-----------------------------------------------------------------------------
-// PROTOTYPES
-//-----------------------------------------------------------------------------
 int main(int argc, char **argv);
 void render(void);
 void init(void);
-void getBitmapImageData(const std::string pFileName, BMPImage *pImage);
-void loadTexture(void);
-void MakeMesh();
 
 DomoUI::Renderable *object;
 
 //-----------------------------------------------------------------------------
 // Name: main()
-// Desc:
 //-----------------------------------------------------------------------------
 int main( int argc, char **argv )
 {	
@@ -190,6 +139,17 @@ int main( int argc, char **argv )
 
     // Init OpenGL...
     init();
+	
+	
+	try
+	{
+		object = DomoUI::Engine::Get().CreateRenderable( "../Media/Plane.dmesh" , "../Media/test.bmp");
+		object->setPZ(-5);
+	}
+	catch(DomoUI::Exception *e)
+	{
+		std::cout<<"Except:"<<e->getComment()<<std::endl;
+	}
  
     //
     // Enter the render loop and don't forget to dispatch X events as
@@ -277,105 +237,6 @@ void init( void )
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
-	
-	loadTexture();
-	MakeMesh();
-	
-	try
-	{
-		object = new DomoUI::Renderable( "../Media/Plane.dmesh" , "../Media/test.bmp");
-		object->setPZ(-5);
-	}
-	catch(DomoUI::Exception *e)
-	{
-		std::cout<<"Except:"<<e->getComment()<<std::endl;
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Name: getBitmapImageData()
-// Desc: Simply image loader for 24 bit BMP files.
-//-----------------------------------------------------------------------------
-void getBitmapImageData( const std::string pFileName, BMPImage *pImage )
-{
-    FILE *pFile = NULL;
-    unsigned short nNumPlanes;
-    unsigned short nNumBPP;
-	int i;
-
-    if( (pFile = fopen(pFileName.c_str(), "rb") ) == NULL )
-		printf("ERROR: getBitmapImageData - %s not found\n",pFileName.c_str());
-
-    // Seek forward to width and height info
-    fseek( pFile, 18, SEEK_CUR );
-
-    if( (i = fread(&pImage->width, 4, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read width from %s.\n", pFileName.c_str());
-
-    if( (i = fread(&pImage->height, 4, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read height from %s.\n", pFileName.c_str());
-
-    if( (fread(&nNumPlanes, 2, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read plane count from %s.\n", pFileName.c_str());
-	
-    if( nNumPlanes != 1 )
-		printf( "ERROR: getBitmapImageData - Plane count from %s is not 1: %u\n", pFileName.c_str(), nNumPlanes );
-
-    if( (i = fread(&nNumBPP, 2, 1, pFile)) != 1 )
-		printf( "ERROR: getBitmapImageData - Couldn't read BPP from %s.\n", pFileName.c_str() );
-	
-    if( nNumBPP != 24 )
-		printf( "ERROR: getBitmapImageData - BPP from %s is not 24: %u\n", pFileName.c_str(), nNumBPP );
-
-    // Seek forward to image data
-    fseek( pFile, 24, SEEK_CUR );
-
-	// Calculate the image's total size in bytes. Note how we multiply the 
-	// result of (width * height) by 3. This is becuase a 24 bit color BMP 
-	// file will give you 3 bytes per pixel.
-    int nTotalImagesize = (pImage->width * pImage->height) * 3;
-
-    pImage->data = (char*) malloc( nTotalImagesize );
-	
-    if( (i = fread(pImage->data, nTotalImagesize, 1, pFile) ) != 1 )
-		printf("ERROR: getBitmapImageData - Couldn't read image data from %s.\n", pFileName.c_str());
-
-    //
-	// Finally, rearrange BGR to RGB
-	//
-	
-	char charTemp;
-    for( i = 0; i < nTotalImagesize; i += 3 )
-	{ 
-		charTemp = pImage->data[i];
-		pImage->data[i] = pImage->data[i+2];
-		pImage->data[i+2] = charTemp;
-    }
-}
-
-//-----------------------------------------------------------------------------
-// Name: loadTexture()
-// Desc: 
-//-----------------------------------------------------------------------------
-void loadTexture( void )	
-{
-	BMPImage textureImage;
-	
-    getBitmapImageData( "../Media/test.bmp", &textureImage );
-
-	glGenTextures( 1, &g_textureID );
-	glBindTexture( GL_TEXTURE_2D, g_textureID );
-
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-	glTexImage2D( GL_TEXTURE_2D, 0, 3, textureImage.width, textureImage.height, 
-	               0, GL_RGB, GL_UNSIGNED_BYTE, textureImage.data );
-}
-
-void MakeMesh()
-{
-	glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
 }
 
 //-----------------------------------------------------------------------------
@@ -388,9 +249,7 @@ void render( void )
 	
     glMatrixMode( GL_MODELVIEW );
 	
-	DomoUI::Engine eng;
-	
-	eng.RenderBit(object);
+	DomoUI::Engine::Get().RenderAll();
 	
 	object->setRX( object->getRX() + 0.1f );
 

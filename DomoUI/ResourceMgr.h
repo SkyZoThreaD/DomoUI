@@ -17,8 +17,6 @@ public:
 	ResourceMgr();
 	~ResourceMgr();
 private:
-	//ResourceMgr& operator= (const ResourceMgr&){}
-	//ResourceMgr (const ResourceMgr&){}
 	std::vector<Texture> Texture_Array;
 	std::vector<Mesh> Mesh_Array;
 	static ResourceMgr Unique_Instance;
